@@ -38,7 +38,7 @@
 
         fetch(scriptURL, { method: 'POST', body: new FormData(form)})
             .then(response => {
-                statusDiv.innerText = "Suksess! Data er lagret i Google Sheet.";
+                statusDiv.innerText = "Suksess! Data er lagret i Excel.";
                 statusDiv.style.color = "green";
                 form.reset();
                 document.getElementById('submit-btn').disabled = false;
