@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <title>Kontaktskjema - Gratis Test</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f4; display: flex; justify-content: center; padding: 50px; }
+        .box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 400px; }
+        h2 { color: #1b4d3e; }
+        input, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background: #1b4d3e; color: white; border: none; padding: 12px; width: 100%; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        #status { margin-top: 15px; text-align: center; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Kontakt oss (Gratis test)</h2>
+    <form id="my-form">
+        <input type="text" name="fornavn" placeholder="Fornavn" required>
+        <input type="text" name="etternavn" placeholder="Etternavn" required>
+        <input type="email" name="email" placeholder="Din e-post" required>
+        <textarea name="melding" placeholder="Din melding" required></textarea>
+        <button type="submit" id="submit-btn">Send melding</button>
+    </form>
+    <div id="status"></div>
+</div>
+
+<script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxh3Y0wgJYL80xbfBc4gsJ_Huxy4SbE9tGyobQa9aNi_f3DE93ZvBXXxa9BmYbNObuBtQ/exec';
+    const form = document.getElementById('my-form');
+    const statusDiv = document.getElementById('status');
+
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        document.getElementById('submit-btn').disabled = true;
+        statusDiv.innerText = "Sender...";
+
+        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+            .then(response => {
+                statusDiv.innerText = "Suksess! Data er lagret i Google Sheet.";
+                statusDiv.style.color = "green";
+                form.reset();
+                document.getElementById('submit-btn').disabled = false;
+            })
+            .catch(error => {
+                statusDiv.innerText = "Feil ved sending.";
+                statusDiv.style.color = "red";
+                console.error('Error!', error.message);
+            });
+    });
+</script>
+
+</body>
+</html>
