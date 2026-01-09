@@ -27,7 +27,7 @@
 </div>
 
 <script>
-    const scriptURL = 'https://defaultf60dacb1bd204655889bd6b02a4b83.00.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ee5433f5240c40ffac4166a947acf300/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=IR5oUT143jGrH10faUDuwMiSKF31PWod5vPYXb_yqYk';
+    const scriptURL = 'https://defaultf60dacb1bd204655889bd6b02a4b83.00.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ee5433f5240c40ffac4166a947acf300/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=IR5oUT143jGrH10faUDuwMiSKF31PWod5vPYXb_yqYk'; // Husk å lime inn din lange URL her!
     const form = document.getElementById('my-form');
     const statusDiv = document.getElementById('status');
 
@@ -36,18 +36,36 @@
         document.getElementById('submit-btn').disabled = true;
         statusDiv.innerText = "Sender...";
 
-        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
-            .then(response => {
+        // 1. Vi henter dataene fra skjemaet
+        const formData = new FormData(form);
+        // 2. Vi gjør de om til et vanlig JavaScript-objekt
+        const data = Object.fromEntries(formData.entries());
+
+        // 3. Vi sender objektet som en JSON-tekst
+        fetch(scriptURL, {
+            method: 'POST',
+            body: JSON.stringify(data), // Dette fikser 400-feilen!
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
                 statusDiv.innerText = "Suksess! Data er lagret i Excel.";
                 statusDiv.style.color = "green";
                 form.reset();
-                document.getElementById('submit-btn').disabled = false;
-            })
-            .catch(error => {
-                statusDiv.innerText = "Feil ved sending.";
+            } else {
+                statusDiv.innerText = "Feil: " + response.status;
                 statusDiv.style.color = "red";
-                console.error('Error!', error.message);
-            });
+            }
+            document.getElementById('submit-btn').disabled = false;
+        })
+        .catch(error => {
+            statusDiv.innerText = "Feil ved sending.";
+            statusDiv.style.color = "red";
+            console.error('Error!', error.message);
+            document.getElementById('submit-btn').disabled = false;
+        });
     });
 </script>
 
